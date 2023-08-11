@@ -50,10 +50,11 @@ namespace ProAirApiServices.Endpoints.Membership
                            DisplayName = model.DisplayName,
                            FirstName = model.FirstName,
                            LastName = model.LastName,
+                           CountryId = model.CountryId,
                            Address = model.Address,
                            City = model.City,
                            State = model.State,
-                           Zip = (short)model?.Zip,
+                           Zip = model?.Zip == null ? (short)0 : (short)model.Zip,
                            MembershipLevel = model.Level,
                            ExpirationDate = DateTime.Now.AddYears(FREE_MEMBERSHIP_YEARS),                           
                            Password = Convert.ToBase64String(_encryptor.EncryptPassword(model.Password)),
@@ -68,16 +69,16 @@ namespace ProAirApiServices.Endpoints.Membership
                            var memberCcModel = new MembersCreditCardsDto
                            {
                                MemberId = model.Email,
-                               CardNumber = model.CreditCardModel.CardNumber,
-                               FirstName = model.CreditCardModel.FirstName,
-                               LastName = model.CreditCardModel.LastName,
-                               ExpirationDate = model.CreditCardModel.ExpirationDate,
-                               CvvCode = model.CreditCardModel.CardCode,
-                               UseProfileAddress = model.CreditCardModel.UseProfileAddress,
-                               Address = model.CreditCardModel.Address,
-                               City = model.CreditCardModel.City,
-                               StateId = model.CreditCardModel.State,
-                               Zip = (short)model.Zip,
+                               CardNumber = model?.CreditCardModel?.CardNumber??"",
+                               FirstName = model?.CreditCardModel?.FirstName??"",
+                               LastName = model?.CreditCardModel?.LastName??"",
+                               ExpirationDate = model?.CreditCardModel?.ExpirationDate??"",
+                               CvvCode = model?.CreditCardModel?.CardCode??0,
+                               UseProfileAddress = model?.CreditCardModel?.UseProfileAddress??false,
+                               Address = model?.CreditCardModel?.Address??"",
+                               City = model?.CreditCardModel?.City??"",
+                               StateId = model?.CreditCardModel?.State??-1,
+                               Zip = model?.Zip == null ? (short)0 : (short)model.Zip,
                                DateAdded = DateTime.Now,
                                DateModified = DateTime.Now
                            };
@@ -88,7 +89,7 @@ namespace ProAirApiServices.Endpoints.Membership
                    }
                    catch (Exception ex)
                    {
-                       LogError(ex.Message);
+                               LogError($"Message: {ex.Message} Inner Exception: {ex?.InnerException?.Message}");
                        return Results.BadRequest("Error found while saving member data.");
                    }
                }),
@@ -118,21 +119,19 @@ namespace ProAirApiServices.Endpoints.Membership
                        LogError(ex.Message);
                        return Results.BadRequest("Error found while getting display name.");
                    }
-               }),
-               app.MapGet($"{ROUTE}/getProfile", ([FromQueryAttribute] string email) => {
-               
                })
             #endregion
            );
         }
 
-        public override void RegisterBasic(WebApplication app)
+        public override void RegisterAuthorized(WebApplication app)
         {
-            BasicLevel(
-                app.MapGet($"{ROUTE}/members/profile", () => {                    
-                    return Results.Ok("caca");
+            Authorized(
+                app.MapGet($"{ROUTE}/getProfile", ([FromQuery] string email) => {
+                    var user = _memberServices.GetMemberProfile(email);
+                    return Results.Ok(user);
                 })
             );
-        }     
+        }   
     }
 }

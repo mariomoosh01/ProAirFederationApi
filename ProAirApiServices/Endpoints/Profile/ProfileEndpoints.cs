@@ -26,6 +26,12 @@ namespace ProAirApiServices.Endpoints.Profile
                     var states = profileServices.GetStates();
 
                     return Results.Ok(states);
+                }),
+                app.MapGet($"{ROUTE}/getCountries", () =>
+                {
+                    var countries = profileServices.GetCountries();
+
+                    return Results.Ok(countries);
                 })
             );
         }

@@ -20,6 +20,8 @@ namespace ProAirApiServices.DataLayer.Core.Mapper.MapperProfiles
             CreateMap<MemberDto, Members>();
             CreateMap<MembersCreditCards, MembersCreditCardsDto>();               
             CreateMap<MembersCreditCardsDto, MembersCreditCards>();
+            CreateMap<Country, CountryDto>();
+            CreateMap<CountryDto, Country>();
         }
     }
 }

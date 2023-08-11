@@ -25,11 +25,14 @@ namespace ProAirApiServices.DataLayer.DataServices.MemberServices
             this.encryptor = encryptor;
         }
 
-        public bool AuthenticateMember(MemberDto model)
+        public bool AuthenticateMember(MemberDto model, out MemberDto profile)
         {
+            profile = default!;
             var user = GetMemberProfile(model.Email);
 
             if (user == null) return false;
+
+            profile = _mapper.Map<MemberDto>(user);
 
             var hashPwd = Convert.FromBase64String(user.Password);                        
 

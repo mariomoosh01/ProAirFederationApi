@@ -1,8 +1,5 @@
-﻿
-using Azure;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace ProAirApiServices.DataLayer.DataAccess.Repositories
@@ -27,7 +24,15 @@ namespace ProAirApiServices.DataLayer.DataAccess.Repositories
 
         public T? FirstOrDefault(Expression<Func<T, bool>> predicate)
         {
-            return _table.FirstOrDefault(predicate);
+            try {
+                return _table.FirstOrDefault(predicate);
+            }
+            catch(Exception ex)
+            {
+                Log.Error(ex.Message);
+            }
+
+            return null;            
         }
 
         public List<T> GetAll()

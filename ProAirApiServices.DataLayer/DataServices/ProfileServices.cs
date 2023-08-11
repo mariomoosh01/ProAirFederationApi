@@ -10,12 +10,16 @@ namespace ProAirApiServices.DataLayer.DataServices
     public class ProfileServices
     {
         private readonly IRepository<States> _statesRepo;
+        private readonly IRepository<Country> _countriesRepo;
         private readonly IMapper mapper = ServicesMapper.Mapper;
 
         public ProfileServices(ProAirDbContext dbContext)
         {
             _statesRepo = new Repository<States>(dbContext);
+            _countriesRepo = new Repository<Country>(dbContext);
         }
+
+        public List<CountryDto> GetCountries() => mapper.Map<List<CountryDto>>(_countriesRepo.GetAll());
 
         public List<StatesDto> GetStates()
         {

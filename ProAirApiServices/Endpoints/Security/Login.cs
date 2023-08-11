@@ -4,7 +4,6 @@ using ProAirApiServices.DataLayer.Core.Security;
 using ProAirApiServices.DataLayer.DataServices.Contracts;
 using ProAirApiServices.DataLayer.Models.Dto.Login;
 using ProAirApiServices.Models;
-using ProAirApiServices.WrapperEngine;
 using static ProAirApiServices.WrapperEngine.EndpointAuthenticationDeclaration;
 
 namespace ProAirApiServices.Endpoints.Security
@@ -33,13 +32,17 @@ namespace ProAirApiServices.Endpoints.Security
         public override void RegisterAnonymous(WebApplication app)
         {
             Anonymous(
-                app.MapPost($"{ROUTE}/createToken", ([FromBody] MemberDto model) =>
+                app.MapPost($"{ROUTE}/createToken", ([FromBody] LoginModel model) =>
                 {
-                    var validUser = _memberServices.AuthenticateMember(model);
+                    var userDto = new MemberDto {
+                        Email = model.Email,
+                        Password = model.Password
+                    };
+                    var validUser = _memberServices.AuthenticateMember(userDto,out var profile);
 
                     if (!validUser) return Results.Unauthorized();
 
-                    var token = _tokenServices.CreateToken(model);
+                    var token = _tokenServices.CreateToken(userDto);
 
                     return Results.Ok(token);
                 }),
@@ -48,14 +51,13 @@ namespace ProAirApiServices.Endpoints.Security
                         Email = loginModel.Email, 
                         Password = loginModel.Password
                      };
-                    var validUser = _memberServices.AuthenticateMember(model);
+                    var validUser = _memberServices.AuthenticateMember(model,out var profile);
 
                     if (!validUser) return Results.Unauthorized();
 
-                    var user = _memberServices.GetMemberProfile(model.Email);
                     var token = _tokenServices.CreateToken(model);
 
-                    return Results.Ok(new { Name = $"{user.FirstName} {user.LastName}", DisplayName = user.DisplayName, Token = token});
+                    return Results.Ok(new { Name = $"{profile.FirstName} {profile.LastName}", DisplayName = profile.DisplayName, Token = token});
                 })
             ); ;
         }

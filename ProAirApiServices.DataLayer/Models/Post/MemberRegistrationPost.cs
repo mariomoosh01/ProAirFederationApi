@@ -10,6 +10,7 @@ namespace ProAirApiServices.DataLayer.Models.Post
         public string LastName { get; set; } = null!;
         public string Password { get; set; } = null!;
         public int Level { get; set; }
+        public int CountryId { get; set; }
         public string Address { get; set; } = null!;
         public string City { get; set; } = null!;
         public int? State { get; set; } = null!;

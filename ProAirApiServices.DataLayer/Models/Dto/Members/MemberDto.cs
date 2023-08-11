@@ -11,8 +11,9 @@ namespace ProAirApiServices.DataLayer.Models.Dto.Login
         public DateTime ExpirationDate { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime LastUpdated { get; set; }
+        public int CountryId { get; set; }
         public string Address { get; set; } = null!;
-        public string City { get; set; }
+        public string City { get; set; } = null!;
         public int? State { get; set; }
         public short? Zip { get; set; }
         public int? MembershipLevel { get; set; }

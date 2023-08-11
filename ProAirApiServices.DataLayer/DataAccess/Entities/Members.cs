@@ -16,6 +16,7 @@ namespace ProAirApiServices.DataLayer.DataAccess.Entities
         public string DisplayName { get; set; } = null!;
         [Required]
         public string Password { get; set; } = null!;
+        public int? CountryId { get; set; }
         public string Address { get; set; } = null!;
         public string City { get; set; } = null!;
         public int? State { get; set; }

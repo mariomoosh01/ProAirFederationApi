@@ -10,6 +10,7 @@ namespace ProAirApiServices.DataLayer.DataAccess.Core
         internal virtual DbSet<Members> Members { get; set; }
         internal virtual DbSet<States> States { get; set; }
         internal virtual DbSet<MembersCreditCards> MemberCreditCards { get; set; }
+        internal virtual DbSet<Country> Countries { get; set; }
 
         #endregion
 
@@ -27,6 +28,9 @@ namespace ProAirApiServices.DataLayer.DataAccess.Core
                 .HasKey(pk => pk.Id);
 
             modelBuilder.Entity<MembersCreditCards>()
+                .HasKey(pk => pk.Id);
+
+            modelBuilder.Entity<Country>()
                 .HasKey(pk => pk.Id);
         }
     }

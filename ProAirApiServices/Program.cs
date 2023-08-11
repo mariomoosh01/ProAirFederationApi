@@ -5,7 +5,7 @@ using ProAirApiServices.WrapperEngine.Framework;
 using Serilog;
 
 const string CORS_POLICY_NAME = "ProAirCorsPolicy";
-string[] CORS_ALLOWED_METHODS = { "get", "post", "put" };
+string[] CORS_ALLOWED_METHODS = new string[3] { "get", "post", "put" };
 
 var builder = WebApplication.CreateBuilder(args);
 Log.Logger = new LoggerConfiguration()    
@@ -25,8 +25,8 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.AllowAnyOrigin()
-            .AllowAnyHeader()
-            .WithMethods(CORS_ALLOWED_METHODS);
+                .AllowAnyHeader()
+                .WithMethods(CORS_ALLOWED_METHODS);
         });
 });
 builder.Services.AddControllers().AddNewtonsoftJson();
@@ -58,7 +58,10 @@ foreach (var t in types)
 {    
     var s = scope.ServiceProvider.GetService(t);
 
+    if (s is null) continue;
+
     ((IRequest)s).RegisterAnonymous(app);
+    ((IRequest)s).RegisterAuthorized(app);
     ((IRequest)s).RegisterBasic(app);
 }
 
